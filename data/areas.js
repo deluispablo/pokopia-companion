@@ -1,0 +1,1 @@
+window.PANEL_AREAS = ["", "Estepa Estéril", "Bahía Borrasca", "Riscos Rocosos", "Islas Aisladas", "Cuenca Coralina", "", "", "", "", "", "Isla Ensueño", "Pradera Paleta", "Pradera Paleta", "", "", "", "Isla Nube", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
