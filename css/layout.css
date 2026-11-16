@@ -1,0 +1,112 @@
+/* The app shell and how it adapts:
+   phone (< 600): header, list and bottom tab bar; the ficha covers the list
+   tablet (600-899): the same, roomier
+   desktop (900+): sidebar, list and the ficha as a third column; 1400+: wider columns */
+
+.app { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.side { display: none; }
+
+.mtop {
+  flex-shrink: 0;
+  padding: calc(env(safe-area-inset-top) + 10px) 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bar);
+}
+.row1 { min-height: 32px; display: flex; align-items: center; gap: 8px; }
+.mtop h1 { margin: 2px 0 0; font-size: 24px; letter-spacing: -.01em; }
+.mbody { flex: 1; min-height: 0; padding: 12px 16px 24px; background: var(--bg-list); }
+
+/* the ficha: a page over the list, with the tab bar kept above it to jump anywhere */
+.detail { display: none; background: var(--bg-list); }
+.app.open .detail {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 96px);
+  display: block;
+}
+.app.open .tabbar { position: absolute; right: 0; bottom: 0; left: 0; }
+
+@media (max-width: 599px) {
+  .copen { padding-right: 28px; padding-left: 6px; gap: 6px; }
+  .copen .pic { width: 30px; height: 30px; }
+}
+
+@media (min-width: 600px) {
+  .mtop { padding-right: 24px; padding-left: 24px; }
+  .mbody { padding: 16px 24px 28px; }
+  .casa { max-width: 1040px; margin: 0 auto; }
+  .slots, .rsum, .rmembers { grid-template-columns: repeat(4, 1fr); }
+  .hbtn .ql { display: none; }
+  .hbtn .qlong { display: inline; }
+  /* roomier: chips wrap onto lines, labels on the left in one column */
+  .frow { flex-direction: row; align-items: baseline; gap: 12px; }
+  .frow > .flabel { flex: 0 0 96px; }
+  .frow .chips { margin: 0; padding: 0; flex-wrap: wrap; -webkit-mask-image: none; mask-image: none; }
+  .frow.more > .flabel { display: block; }
+}
+
+/* phone and tablet: once the list scrolls, the header keeps only search, segment and the filters button */
+@media (max-width: 899px) {
+  .mtop.compact h1, .mtop.compact .prog, .mtop.compact .filters { display: none; }
+  .mtop.compact .fsum { display: inline-flex; }
+}
+
+@media (min-width: 900px) {
+  .app { display: grid; grid-template-columns: 220px minmax(0, 1fr); }
+  .app.open:not(.casa-tab) { grid-template-columns: 220px minmax(0, 1fr) 360px; }
+  .app.open:not(.casa-tab) .detail { position: static; border-left: 1px solid var(--line); }
+  .main { position: relative; }
+  .tabbar { display: none; }
+
+  .side { padding: 14px 8px; display: flex; flex-direction: column; gap: 1px; border-right: 1px solid var(--line); background: var(--side); }
+  .side .brand { padding: 2px 8px 14px; }
+  .side .spacer { flex: 1; }
+  .navi {
+    min-height: 32px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 7px;
+    background: none;
+    color: var(--text);
+    font-size: 13px;
+    text-align: left;
+  }
+  .navi:hover { background: color-mix(in srgb, var(--text) 7%, transparent); }
+  .navi .n { font-size: 11.5px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .navi[aria-current="page"] { background: var(--chip-on); color: #FFFFFF; font-weight: 600; }
+  .navi[aria-current="page"] .n { color: rgba(255, 255, 255, .85); }
+
+  /* header and list share one centred column; the buttons sit on the title's row */
+  .mtop {
+    padding-top: 14px;
+    padding-inline: max(24px, calc((100% - var(--content)) / 2));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 16px;
+  }
+  .mtop > * { grid-column: 1 / -1; }
+  .mtop > h1 { grid-column: 1; grid-row: 1; min-height: 36px; margin-top: 0; display: flex; align-items: center; }
+  .mtop .row1 { grid-column: 2; grid-row: 1; min-height: 0; }
+  .mtop .brand { display: none; }
+  .mbody { padding-inline: max(24px, calc((100% - var(--content)) / 2)); }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  .dtop { padding-top: 10px; }
+
+  .sheetwrap { justify-content: center; }
+  .sheet { height: min(80dvh, 720px); border-radius: 14px; }
+  .grab { visibility: hidden; }
+}
+
+@media (min-width: 1400px) {
+  .app { grid-template-columns: 240px minmax(0, 1fr); }
+  .app.open:not(.casa-tab) { grid-template-columns: 240px minmax(0, 1fr) 420px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+}

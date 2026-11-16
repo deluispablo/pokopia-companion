@@ -1,0 +1,90 @@
+/* Design tokens: colours for the light and dark themes, plus the few shared sizes.
+   The theme follows the system unless the player picks one (html[data-theme="light" | "dark"]). */
+
+:root {
+  color-scheme: light dark;
+
+  --bg: #FFFFFF;
+  --bg-list: #FAFAFB;
+  --bar: #F6F6F6;
+  --side: #EFEFF2;
+  --line: #DCDCDC;
+  --line-soft: #E5E5EA;
+  --chip: #F2F2F5;
+  --off: #D1D1D6;
+  --field: #FFFFFF;
+  --field-line: #D2D2D7;
+  --scrim: rgba(0, 0, 0, .45);
+
+  --text: #1D1D1F;
+  --text-2: #6E6E73;
+  --text-3: #737378;
+
+  --accent: #0064D2;
+  --accent-soft: #E8F0FB;
+  --accent-text: #0058B8;
+  --ok: #1E7A34;
+  /* white text and marks need a fill dark enough to read on */
+  --chip-on: var(--accent);
+  --on-ok: #FFFFFF;
+
+  --content: 1200px; /* width of the centred header and list on a wide screen */
+  --radius-card: 10px;
+  --radius-field: 9px;
+  --radius-pill: 999px;
+  --control: 36px; /* height of buttons, fields and selects in content */
+}
+
+/* dark: the same list, once for the system setting and once for the player's pick */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1E1E1E;
+    --bg-list: #1B1B1D;
+    --bar: #2A2A2C;
+    --side: #252527;
+    --line: #3A3A3C;
+    --line-soft: #333336;
+    --chip: #2C2C2E;
+    --off: #48484A;
+    --field: #1C1C1E;
+    --field-line: #48484A;
+    --scrim: rgba(0, 0, 0, .6);
+    --text: #F2F2F7;
+    --text-2: #A1A1A6;
+    --text-3: #8E8E93;
+    --accent: #0A84FF;
+    --accent-soft: #10335A;
+    --accent-text: #6CB4FF;
+    --ok: #32D74B;
+    --chip-on: #0060C8;
+    --on-ok: #0B2E12;
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1E1E1E;
+  --bg-list: #1B1B1D;
+  --bar: #2A2A2C;
+  --side: #252527;
+  --line: #3A3A3C;
+  --line-soft: #333336;
+  --chip: #2C2C2E;
+  --off: #48484A;
+  --field: #1C1C1E;
+  --field-line: #48484A;
+  --scrim: rgba(0, 0, 0, .6);
+  --text: #F2F2F7;
+  --text-2: #A1A1A6;
+  --text-3: #8E8E93;
+  --accent: #0A84FF;
+  --accent-soft: #10335A;
+  --accent-text: #6CB4FF;
+  --ok: #32D74B;
+  --chip-on: #0060C8;
+  --on-ok: #0B2E12;
+}
