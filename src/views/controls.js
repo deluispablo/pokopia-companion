@@ -25,7 +25,9 @@ export const brand = () => h("div", { class: "brand" }, h("span", { class: "logo
 
 /** Segmented buttons: options [[value, label]], set(value) then render. */
 export const segmented = (options, value, set, label) => h("div", { class: "seg", role: "group", "aria-label": label },
-  options.map(([v, text]) => h("button", { "aria-pressed": String(value === v), onclick: () => { set(v); render(); } }, text)));
+  options.map(([v, text]) => h("button", {
+    "aria-pressed": String(value === v), onclick: () => { set(v); render(); },
+  }, text)));
 
 /** A filter as a field, its label on top and the select below, so filters line up in columns. */
 export function selectField(label, anyLabel, options, value, set, show) {
@@ -37,12 +39,14 @@ export function selectField(label, anyLabel, options, value, set, show) {
       h("span", { class: "chev", html: CHEVRON })));
 }
 
-export const filterRow = (label, ...children) => h("div", { class: "frow" }, h("span", { class: "flabel" }, label), ...children);
+export const filterRow = (label, ...children) =>
+  h("div", { class: "frow" }, h("span", { class: "flabel" }, label), ...children);
 
 export const chip = (label, on, onclick, iconEl) =>
   h("button", { class: "chip", "aria-pressed": String(on), onclick }, iconEl || null, label);
 
-export const subtab = (label, on, onclick) => h("button", { class: "subtab", "aria-pressed": String(on), onclick }, label);
+export const subtab = (label, on, onclick) =>
+  h("button", { class: "subtab", "aria-pressed": String(on), onclick }, label);
 
 /** "lives in <area>", with the home symbol. */
 export const whereLabel = (area) => h("span", { class: "where" },

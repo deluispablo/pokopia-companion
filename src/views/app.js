@@ -14,7 +14,8 @@ import { renderNav } from "./nav.js";
 // but not when you mark something
 const listKey = () => (state.tab === "casa"
   ? "casa:" + state.houses.mode
-  : [state.tab, state.show, state.query, state.group, state.subcategory, state.recipe, JSON.stringify(state.filters)].join("|"));
+  : [state.tab, state.show, state.query, state.group, state.subcategory, state.recipe, JSON.stringify(state.filters)]
+    .join("|"));
 let lastListKey = "";
 
 export function renderApp() {
@@ -33,6 +34,6 @@ export function renderApp() {
   if (scroll != null) byId("list").scrollTop = scroll;
   else if (key !== lastListKey) byId("list").scrollTop = 0;
   lastListKey = key;
-  // keep the keyboard where it was: the same control rebuilt, or the card of the ficha just closed
+  // keep the keyboard where it was: the same control rebuilt, or the card of the detail page just closed
   refocus(closed ? "open:" + closed.kind + ":" + closed.id : focus);
 }

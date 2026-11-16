@@ -46,8 +46,9 @@ function card(entry) {
       h("span", { class: "t" }, h("b", null, name), subtitle ? h("span", null, subtitle) : null,
         where ? whereLabel(where) : null)),
     h("button", {
-      class: "mark", "data-k": "mark:" + key, "aria-pressed": String(own), "aria-label": t(KINDS[entry.kind].on) + ": " + name,
-      html: CHECK, onclick: () => markWithUndo(entry.set, entry.id, name),
+      class: "mark", "data-k": "mark:" + key, "aria-pressed": String(own),
+      "aria-label": t(KINDS[entry.kind].on) + ": " + name, html: CHECK,
+      onclick: () => markWithUndo(entry.set, entry.id, name),
     }),
     entry.craft ? h("button", {
       class: "rmark", "data-k": "rmark:" + key, "aria-pressed": String(learned),

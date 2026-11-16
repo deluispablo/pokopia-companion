@@ -3,7 +3,7 @@
 // and dishes seen, craft = item recipes learned, at = when each mark was made ("kind:id" -> ms).
 import { isPlainObject, uniq } from "./util.js";
 
-export const MARKS_KEY = "pokopia:v1";
+const MARKS_KEY = "pokopia:v1";
 const PREFS_KEY = "pokopia:prefs";
 export const MARK_KINDS = ["pok", "hab", "craft", "items", "rec"];
 // kept as it was first published, so every backup file has the same name pattern

@@ -21,7 +21,7 @@ test("entries have unique ids and a known group", () => {
   assert.ok(game.entries.pok.every((e) => ZONES.includes(e.group)));
 });
 
-test("lookups find what the routes and fichas link to", () => {
+test("lookups find what the routes and detail pages link to", () => {
   const ivysaur = game.findEntry("pok", "Ivysaur");
   assert.equal(ivysaur.kind, "pok");
   assert.ok(ivysaur.o.habs.length > 0);

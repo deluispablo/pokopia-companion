@@ -31,7 +31,7 @@ export function applyPrefs() {
   setLanguage(prefs.lang);
 }
 
-export function changePref(key, value) {
+function changePref(key, value) {
   setPref(key, value);
   applyPrefs();
   render();
@@ -121,7 +121,9 @@ function progressLine(kind) {
   const all = game.entries[kind];
   const mine = all.filter(isMarked).length;
   const counts = { n: mine, m: all.length };
-  if (kind === "obj") Object.assign(counts, { r: all.filter(recipeLearned).length, c: all.filter((e) => e.craft).length });
+  if (kind === "obj") {
+    Object.assign(counts, { r: all.filter(recipeLearned).length, c: all.filter((e) => e.craft).length });
+  }
   // with a search or filters on, also how many of the shown ones you have
   const shown = activeFilterCount() || state.query ? visibleEntries(kind, true) : null;
   const here = shown ? " · " + t("progress.here", { n: shown.filter(isMarked).length, m: shown.length }) : null;

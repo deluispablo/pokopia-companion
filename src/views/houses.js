@@ -71,7 +71,8 @@ function candidate(k, env, full) {
   const add = () => { if (!full) addMember(k); };
   const members = houses().members;
   if (env && P[k].env !== env) {
-    return h("button", { class: "cand other " + ownClass(k), "aria-disabled": String(full), onclick: add }, pokemonPic(k),
+    return h("button", { class: "cand other " + ownClass(k), "aria-disabled": String(full), onclick: add },
+      pokemonPic(k),
       h("span", null, h("b", null, P[k].n),
         h("span", { class: "sub" }, t("houses.otherEnv", { e: environmentName(P[k].env || "").toLowerCase() }))),
       h("span"));
@@ -79,7 +80,9 @@ function candidate(k, env, full) {
   const f = fit(P, k, members);
   const common = members.length ? uniq(members.flatMap((j) => P[k].likes.filter((l) => P[j].likes.includes(l)))) : null;
   let note = "";
-  if (common) note = common.length ? t("houses.inCommon", { l: common.map(likeName).join(", ") }) : t("houses.nothingInCommon");
+  if (common) {
+    note = common.length ? t("houses.inCommon", { l: common.map(likeName).join(", ") }) : t("houses.nothingInCommon");
+  }
   else if (P[k].flavor) note = [flavorIcon(P[k].flavor), flavorName(P[k].flavor)];
   const barColor = f == null ? "" : f >= .5 ? "var(--ok)" : f >= .3 ? "var(--accent)" : "var(--off)";
   const textColor = f >= .5 ? "var(--ok)" : f >= .3 ? "var(--text)" : "var(--text-3)";
@@ -100,8 +103,8 @@ function candidatesByEnvironment(list) {
     const key = "env:" + env;
     const shown = houses().open.has(key) ? ks : ks.slice(0, 5);
     return [
-      h("div", { class: "gsub" }, environmentIcon(env, 14), t("houses.envGroup", { e: environmentName(env).toLowerCase() }),
-        h("span", { class: "n" }, " " + ks.length)),
+      h("div", { class: "gsub" }, environmentIcon(env, 14),
+        t("houses.envGroup", { e: environmentName(env).toLowerCase() }), h("span", { class: "n" }, " " + ks.length)),
       shown.map((k) => candidate(k, "", false)),
       moreLink(key, ks.length, 5, Infinity),
     ];
@@ -140,10 +143,13 @@ function picker() {
   const searchLabel = t("houses.searchPokemon");
   return h("section", { class: "hcard" },
     h("button", { class: "fold", "aria-expanded": String(houses().pickerOpen), onclick: toggle },
-      h("h2", { class: "grow" }, t(n ? "houses.addResidents" : "houses.pickFirst")), h("span", { class: "chev", html: CHEVRON })),
+      h("h2", { class: "grow" }, t(n ? "houses.addResidents" : "houses.pickFirst")),
+      h("span", { class: "chev", html: CHEVRON })),
     houses().pickerOpen ? [
       h("div", { class: "msearch", html: SEARCH },
-        h("input", { type: "search", placeholder: searchLabel, value: houses().query, "aria-label": searchLabel, oninput: onSearch })),
+        h("input", {
+          type: "search", placeholder: searchLabel, value: houses().query, "aria-label": searchLabel, oninput: onSearch,
+        })),
       h("div", { class: "hopts" }, anyMark("pok") ? pokemonFilters() : null,
         env ? h("label", { class: "check" }, h("input", {
           type: "checkbox", checked: houses().otherEnvironments ? true : null,
@@ -152,7 +158,8 @@ function picker() {
       h("p", { class: "small muted", style: "margin:0" }, env
         ? [t("houses.envBefore"), h("b", null, environmentName(env).toLowerCase()), t("houses.envAfter")]
         : t("houses.firstSetsEnv")),
-      h("div", { id: "hlist", class: "hlist" + (houses().mineOnly && anyMark("pok") ? " mine-only" : "") }, candidates()),
+      h("div", { id: "hlist", class: "hlist" + (houses().mineOnly && anyMark("pok") ? " mine-only" : "") },
+        candidates()),
     ] : null);
 }
 
@@ -198,7 +205,8 @@ function slot(i) {
   homeOf(k) ? whereLabel(homeOf(k)) : null);
 }
 
-const dots = (indexes) => h("span", { class: "hdots" }, indexes.map((i) => h("i", { style: "background:" + RESIDENT_COLORS[i] })));
+const dots = (indexes) =>
+  h("span", { class: "hdots" }, indexes.map((i) => h("i", { style: "background:" + RESIDENT_COLORS[i] })));
 
 // the house's environment, favourite flavours and likes as chips that list what has them
 function houseChips(n) {
@@ -273,7 +281,8 @@ const dishRow = (row) => h("button", {
 
 /** How many residents like these attributes, and how much: {per, who, sum}; extra(k) adds to a resident. */
 function score(attributes, extra) {
-  const per = houses().members.map((k) => P[k].likes.filter((l) => attributes.includes(l)).length + (extra ? extra(k) : 0));
+  const per = houses().members
+    .map((k) => P[k].likes.filter((l) => attributes.includes(l)).length + (extra ? extra(k) : 0));
   return { per, who: per.filter(Boolean).length, sum: per.reduce((a, b) => a + b, 0) };
 }
 const byScore = (a, b) => b.who - a.who || b.sum - a.sum;
@@ -284,7 +293,8 @@ const cardIntro = (key) => h("p", { class: "small muted", style: "margin:0" }, t
 
 function typeBox(title, count, rows, key, note) {
   return h("div", { class: "type" },
-    h("div", { class: "hrow" }, h("b", { class: "grow" }, title), h("span", { class: "small muted" }, optionCount(count))),
+    h("div", { class: "hrow" }, h("b", { class: "grow" }, title),
+      h("span", { class: "small muted" }, optionCount(count))),
     note, shownRows(key, rows, 1, 8).map(itemRow), moreLink(key, rows.length, 1, 8));
 }
 
@@ -326,14 +336,16 @@ function allItemsCard(items) {
   return h("section", { class: "hcard" }, h("h2", null, t("houses.allMatching")), cardIntro("houses.allMatchingIntro"),
     h("div", { class: "hitems" }, items.slice(0, limit).map(itemRow)),
     items.length > limit
-      ? h("button", { class: "btn more", onclick: more }, t("houses.showMoreN", { n: Math.min(ITEM_STEP, items.length - limit) }))
+      ? h("button", { class: "btn more", onclick: more },
+        t("houses.showMoreN", { n: Math.min(ITEM_STEP, items.length - limit) }))
       : null);
 }
 
 export function renderHouses() {
   const n = houses().members.length;
   if (!n) {
-    return h("div", { class: "casa" }, h("p", { class: "small muted", style: "margin:0 2px" }, t("houses.intro")), picker());
+    const intro = h("p", { class: "small muted", style: "margin:0 2px" }, t("houses.intro"));
+    return h("div", { class: "casa" }, intro, picker());
   }
   const items = rankItems(P, houses().members, game.items.filter(passesOwned), game.itemTags);
   const ownedFilter = h("div", { class: "hbar" }, segmented(

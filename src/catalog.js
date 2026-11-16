@@ -5,13 +5,13 @@
 import { fold, uniq } from "./util.js";
 
 /** Item categories in the game's catalog order, with the colour of their placeholder square. */
-export const CATEGORIES = [
+const CATEGORIES = [
   ["Muebles", "#A2845E"], ["Decoración", "#C9485B"], ["Objetos útiles", "#AF52DE"],
   ["Estructuras", "#6E7B8B"], ["Bloques", "#5E9C76"], ["Exteriores", "#2F9E8F"],
   ["Naturaleza", "#4E9A6A"], ["Comida", "#E8833A"], ["Materiales", "#8E8E93"], ["Kits", "#2F7FD6"],
   ["Edificios especiales", "#B5533C"], ["Objetos clave", "#D4A017"], ["Otros", "#A1A1A6"],
 ];
-// cats.js keeps the Guía's own names for these; the game's catalog calls them otherwise
+// cats.js keeps the panel's own names (the desktop Guía) for these; the game's catalog calls them otherwise
 const GAME_CATEGORY = {
   "Construcción": "Estructuras", "Varios": "Otros", "Utilidades": "Objetos útiles", "Exterior": "Exteriores",
 };
@@ -27,7 +27,7 @@ export const FAMILIES = [
 
 export const FLAVORS = ["dulce", "amargo", "ácido", "seco", "picante", "normal"];
 
-export const OTHER_ZONE = "Otros";
+const OTHER_ZONE = "Otros";
 // the last habitat number of each main area; Cuenca Coralina's habitats are flagged instead
 const ZONE_ENDS = [
   [49, "Estepa Estéril"], [97, "Bahía Borrasca"], [136, "Riscos Rocosos"],
@@ -100,7 +100,9 @@ export function buildCatalog(globals) {
   const pokemonPicture = (p) => (images.pok && images.pok[p.n]
     ? { src: "img/pokemon/" + images.pok[p.n] }
     : { sq: p.n, color: POKEMON_COLOR });
-  const habitatPicture = (x) => (x.img ? { src: "img/habitats/" + x.img, hab: true } : { sq: x.n, color: HABITAT_COLOR });
+  const habitatPicture = (x) => (x.img
+    ? { src: "img/habitats/" + x.img, hab: true }
+    : { sq: x.n, color: HABITAT_COLOR });
   const dishPicture = (r) => (r[6] != null && itemImages.has(r[6])
     ? { src: "img/items/" + r[6] + ".png" }
     : { sq: r[0], color: familyOf(r).color });

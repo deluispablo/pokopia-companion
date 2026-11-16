@@ -19,7 +19,7 @@ function foldHeaderOnScroll(ev) {
   else if (y < 4) top.classList.remove("compact");
 }
 
-// Escape closes a sheet, else the ficha
+// Escape closes a sheet, else the detail page
 function onKeydown(ev) {
   if (ev.key !== "Escape" || ev.defaultPrevented) return;
   if (!byId("sheet").hidden) {
@@ -34,7 +34,7 @@ setRenderer(renderApp);
 setSaveErrorHandler(() => toast(t("backup.saveFailed")));
 byId("list").addEventListener("scroll", foldHeaderOnScroll, { passive: true });
 document.addEventListener("keydown", onKeydown);
-// the ficha's inert list follows the layout when the window crosses the wide breakpoint
+// the inert list behind a detail page follows the layout when the window crosses the wide breakpoint
 matchMedia(WIDE_QUERY).addEventListener("change", () => renderDetail());
 
 loadPrefs();

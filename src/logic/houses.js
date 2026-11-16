@@ -32,7 +32,8 @@ const TYPES = [
   ["Mesa", /^(mesa|escritorio|mostrador|mesita)/i],
   ["Asiento", /^(silla|sofá|taburete|banco|asiento|tumbona|cojín|sillón|butaca|puf|banqueta)/i],
   ["Luz", /^(lámpara|farola|farolillo|vela|antorcha|foco|candelabro|luz|linterna|lamparita|fanal)/i],
-  ["Almacenaje", /^(estantería|estante|armario|cajonera|tocador|caja|cesta|arcón|taquilla|mueble|nevera|baúl|balda|revistero)/i],
+  ["Almacenaje",
+    /^(estantería|estante|armario|cajonera|tocador|caja|cesta|arcón|taquilla|mueble|nevera|baúl|balda|revistero)/i],
   ["En la pared", /^(cuadro|lienzo|póster|marco|reloj|espejo|pizarra|guirnalda|mapa|bandera|tapiz)/i],
   ["Plantas", /^(flores|planta|arbolito|maceta|adorno floral|ramo|seto)/i],
   ["Alfombra", /^(alfombra|felpudo|tatami|esterilla)/i],
@@ -50,7 +51,9 @@ export function typeOf(item) {
 }
 
 // what can go in a house (cats.js categories)
-const KINDS = new Set(["Muebles", "Decoración", "Utilidades", "Construcción", "Bloques", "Exterior", "Naturaleza", "Materiales"]);
+const KINDS = new Set([
+  "Muebles", "Decoración", "Utilidades", "Construcción", "Bloques", "Exterior", "Naturaleza", "Materiales",
+]);
 
 /** The placeable items with attributes that please at least one housemate:
  *  {it, t, per (likes matched per housemate), who, sum}, pleasing more housemates first, then more likes;

@@ -14,7 +14,7 @@ const progress = (key) => {
   return all.filter(isMarked).length + "/" + all.length;
 };
 
-// tapping the current tab on its list starts the list over; from a ficha it goes back to the list
+// tapping the current tab on its list starts the list over; from a detail page it goes back to the list
 const goToTab = (key) => () => {
   if (key === state.tab && !state.selected) {
     if (LIST_TABS.includes(key)) Object.assign(state, freshList());

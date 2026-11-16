@@ -62,6 +62,8 @@ test("mergeMarks joins lists and lets the first set win where both say something
 
 test("countToday counts marks since local midnight", () => {
   const now = new Date(2026, 10, 16, 15, 0);
-  const at = { a: +new Date(2026, 10, 16, 0, 0), b: +new Date(2026, 10, 16, 14, 0), c: +new Date(2026, 10, 15, 23, 59) };
+  const at = {
+    a: +new Date(2026, 10, 16, 0, 0), b: +new Date(2026, 10, 16, 14, 0), c: +new Date(2026, 10, 15, 23, 59),
+  };
   assert.equal(countToday(at, now), 2);
 });

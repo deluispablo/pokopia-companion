@@ -6,11 +6,13 @@ export const MAX_RESIDENTS = 4;
 
 /** A list tab's own state, kept per tab while you visit others.
  *  filters: what a link can set (tag, flavor, env, spw, zone); recipe: "", "craft", "learned" or "tolearn". */
-export const freshList = () => ({ show: "all", query: "", group: "", subcategory: "", limit: PAGE_SIZE, filters: {}, recipe: "" });
+export const freshList = () => ({
+  show: "all", query: "", group: "", subcategory: "", limit: PAGE_SIZE, filters: {}, recipe: "",
+});
 
 export const state = {
   tab: "pok",
-  selected: null, // the entry whose ficha is open
+  selected: null, // the entry whose detail page is open
   ...freshList(),
   houses: {
     mode: "design", // or "split"

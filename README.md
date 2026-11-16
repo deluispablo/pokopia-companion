@@ -50,7 +50,7 @@ src/
   i18n/             es.js and en.js UI strings, game-terms.js official game wording
   logic/houses.js   house fit, item ranking and the automatic split
   ui/               DOM helper, icons, toast, sheet, focus keeping
-  views/            header, filters, list, ficha (detail), houses, split, sheets, nav
+  views/            header, filters, list, detail page, houses, split, sheets, nav
 tests/              node --test suites
 tools/sync-data.sh  copies fresh game data from the nxnative repo
 dev/                sample marks to import while testing

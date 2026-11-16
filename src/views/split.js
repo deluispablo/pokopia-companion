@@ -39,7 +39,8 @@ function environmentCard(env, houses) {
   const count = t(houses.length === 1 ? "split.houseCountOne" : "split.houseCountMany", { n: houses.length });
   return h("section", { class: "hcard" },
     h("div", { class: "hrow" },
-      h("h2", { class: "grow" }, environmentIcon(env, 16), t("houses.envGroup", { e: environmentName(env).toLowerCase() })),
+      h("h2", { class: "grow" }, environmentIcon(env, 16),
+        t("houses.envGroup", { e: environmentName(env).toLowerCase() })),
       h("span", { class: "small muted" }, count + " · " + percent(average(houses)))),
     h("div", { class: "rhouses" }, houses.map(houseBox)));
 }
@@ -68,7 +69,8 @@ export function renderSplit() {
   const environments = uniq(houses.map((x) => P[x.m[0]].env));
   return h("div", { class: "casa" }, head,
     environments.map((env) => environmentCard(env, houses.filter((x) => P[x.m[0]].env === env))),
-    homeless.length ? h("section", { class: "hcard" }, h("h2", null, t("split.homelessTitle")), note("split.homelessHint"),
+    homeless.length ? h("section", { class: "hcard" },
+      h("h2", null, t("split.homelessTitle")), note("split.homelessHint"),
       h("div", { class: "tags" }, homeless.map((k) =>
         h("button", { class: "tag link", onclick: () => openEntry(game.entries.pok[k]) }, P[k].n)))) : null);
 }

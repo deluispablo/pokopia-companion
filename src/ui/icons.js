@@ -13,7 +13,7 @@ const ROUND = `fill="none" stroke="currentColor" stroke-linecap="round" stroke-l
 // complete icons with their own grid
 export const CHECK = `<svg width="12" height="12" viewBox="0 0 12 12" ${ROUND} stroke-width="2">`
   + `<path d="M2.5 6.3l2.3 2.3L9.5 3.6"/></svg>`;
-// the same tick in a wider box, as the ficha's mark button has always drawn it
+// the same tick in a wider box, as the detail page's mark button has always drawn it
 export const CHECK_BUTTON = `<svg width="16" height="16" viewBox="0 0 16 16" ${ROUND} stroke-width="2">`
   + `<path d="M2.5 6.3l2.3 2.3L9.5 3.6"/></svg>`;
 export const RECIPE = `<svg width="12" height="12" viewBox="0 0 12 12" ${ROUND} stroke-width="1.4">`
@@ -74,7 +74,8 @@ const FLAVOR_ICONS = {
   "ácido": `<ellipse cx="11" cy="11" rx="7" ry="5" transform="rotate(-35 11 11)"/><path d="M8 14l6-6"/>`,
   amargo: `<path d="M5 9h10v4a5 5 0 01-10 0z"/><path d="M15 10h1.5a2 2 0 010 4H15"/>`
     + `<path d="M8 4.5c0 1.5 1 1.5 1 3M11.5 4.5c0 1.5 1 1.5 1 3"/>`,
-  seco: `<path d="M11 19V8"/><path d="M11 9c-2.5 0-3.5-2-3.5-4 2.5 0 3.5 2 3.5 4zM11 9c2.5 0 3.5-2 3.5-4-2.5 0-3.5 2-3.5 4z`
+  seco: `<path d="M11 19V8"/>`
+    + `<path d="M11 9c-2.5 0-3.5-2-3.5-4 2.5 0 3.5 2 3.5 4zM11 9c2.5 0 3.5-2 3.5-4-2.5 0-3.5 2-3.5 4z`
     + `M11 13c-2.5 0-3.5-2-3.5-4 2.5 0 3.5 2 3.5 4zM11 13c2.5 0 3.5-2 3.5-4-2.5 0-3.5 2-3.5 4z"/>`,
   normal: `<circle cx="11" cy="11" r="7"/><circle cx="11" cy="11" r="3.5"/>`,
 };

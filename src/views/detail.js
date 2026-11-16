@@ -1,4 +1,4 @@
-// The ficha: a page over the list on a phone or tablet, the third column on a wide screen.
+// The detail page: a page over the list on a phone or tablet, the third column on a wide screen.
 import { FAMILIES } from "../catalog.js";
 import { game } from "../game.js";
 import {
@@ -28,7 +28,9 @@ const isNarrow = () => !matchMedia(WIDE_QUERY).matches;
 const chevron = () => h("span", { class: "chev", "aria-hidden": "true" }, "›");
 
 const row = (label, value, onclick) => h(onclick ? "button" : "div", { class: "gi", onclick },
-  h("span", { class: "grow" }, label), value != null ? h("span", { class: "v" }, value) : null, onclick ? chevron() : null);
+  h("span", { class: "grow" }, label),
+  value != null ? h("span", { class: "v" }, value) : null,
+  onclick ? chevron() : null);
 
 function markedTag(entry) {
   if (entry.kind === "obj") {
@@ -64,8 +66,9 @@ const spawnText = (m) => [
 // ---------- one body per kind ----------
 
 function homePicker(entry) {
+  const onchange = (ev) => { setHome(entry.id, ev.target.value); render(); };
   return section("detail.location", h("label", { class: "zsel" },
-    h("select", { "aria-label": t("detail.location"), onchange: (ev) => { setHome(entry.id, ev.target.value); render(); } },
+    h("select", { "aria-label": t("detail.location"), onchange },
       h("option", { value: "" }, t("detail.notSet")),
       game.homes.map((z) => h("option", { value: z, selected: z === homeOf(entry.k) ? true : null }, areaName(z)))),
     h("span", { class: "chev", html: CHEVRON })));
@@ -76,12 +79,15 @@ function pokemonBody(entry) {
   const out = [];
   if (hasMark("pok", entry.id)) out.push(homePicker(entry));
   const facts = [
-    p.env && row(t("detail.idealHabitat"), [environmentIcon(p.env, 15), environmentName(p.env)], listBy("pok", { env: p.env })),
+    p.env && row(t("detail.idealHabitat"), [environmentIcon(p.env, 15), environmentName(p.env)],
+      listBy("pok", { env: p.env })),
     p.flavor && row(t("detail.favoriteFlavor"), [flavorIcon(p.flavor, 15), flavorName(p.flavor)],
       listBy("rec", { flavor: p.flavor })),
   ].filter(Boolean);
   if (facts.length) out.push(section("detail.guide", rowList(facts)));
-  if ((p.spw || []).length) out.push(section("detail.specialty", tags(p.spw, specialtyName, (s) => listBy("pok", { spw: s }))));
+  if ((p.spw || []).length) {
+    out.push(section("detail.specialty", tags(p.spw, specialtyName, (s) => listBy("pok", { spw: s }))));
+  }
   if ((p.likes || []).length) {
     const design = () => { state.houses.query = ""; goToHouse([entry.k]); };
     out.push(section("detail.favorites", likeTags(p.likes)),
@@ -108,7 +114,8 @@ function habitatBody(entry) {
   if (needs.length) out.push(section("detail.builtWith", rowList(needs)));
   const visitors = (x.mons || []).map((m) => ({ m, p: game.pokemon[m.p] })).filter((v) => v.p);
   if (visitors.length) {
-    out.push(section("detail.attracts", rowList(visitors.map(({ m, p }) => linkRow(game.findEntry("pok", p.n), spawnText(m))))));
+    const rows = visitors.map(({ m, p }) => linkRow(game.findEntry("pok", p.n), spawnText(m)));
+    out.push(section("detail.attracts", rowList(rows)));
   }
   if ((x.areas || []).length) out.push(section("detail.areas", tags(x.areas, areaName)));
   return out;
@@ -157,8 +164,9 @@ function itemBody(entry) {
   const fans = itemFans(itemTags);
   if (fans.length) {
     out.push(section("detail.likedBy", h("div", { class: "tags" }, fans.slice(0, MAX_FANS).map(([k]) =>
-      h("button", { class: "tag link" + (ownsPokemon(k) ? " mine" : ""), onclick: () => openEntry(game.entries.pok[k]) },
-        game.pokemon[k].n)))));
+      h("button", {
+        class: "tag link" + (ownsPokemon(k) ? " mine" : ""), onclick: () => openEntry(game.entries.pok[k]),
+      }, game.pokemon[k].n)))));
   }
   const madeWithIt = FAMILIES.find((f) => fold(f.utensil) === fold(item[1]));
   if (madeWithIt) {
@@ -168,7 +176,9 @@ function itemBody(entry) {
   const dishes = game.dishesWith(id);
   if (dishes.length) out.push(section("detail.ingredientOf", rowList(dishes.map((r) => linkRow(r)))));
   const habitats = game.habitatsUsing(item);
-  if (habitats.length) out.push(section("detail.usedInHabitats", rowList(habitats.map((x) => linkRow(x, entrySubtitle(x))))));
+  if (habitats.length) {
+    out.push(section("detail.usedInHabitats", rowList(habitats.map((x) => linkRow(x, entrySubtitle(x))))));
+  }
   return out;
 }
 
@@ -220,7 +230,7 @@ export function renderDetail() {
   const app = document.querySelector(".app");
   app.classList.toggle("open", !!entry);
   app.classList.toggle("casa-tab", state.tab === "casa");
-  // the ficha covers the list on phone and tablet, but the tabs stay below it to jump anywhere
+  // the detail page covers the list on phone and tablet, but the tabs stay below it to jump anywhere
   document.querySelector(".main").inert = !!entry && isNarrow();
   const fresh = entry !== lastSelected;
   lastSelected = entry;
@@ -242,10 +252,12 @@ export function renderDetail() {
   el.append(
     h("div", { class: "dtop" }, h("button", { class: "back", onclick: back, html: BACK + t("detail.back") })),
     h("div", { class: "dbody" },
-      h("div", { class: "hero" }, pic(entry.pic), h("h2", null, displayName(entry)), h("span", null, entrySubtitle(entry)),
-        where ? whereLabel(where) : null),
+      h("div", { class: "hero" }, pic(entry.pic), h("h2", null, displayName(entry)),
+        h("span", null, entrySubtitle(entry)), where ? whereLabel(where) : null),
       h("div", { class: "ownbtns" }, markButton(entry, isMarked(entry), kind.on, kind.off, entry.set),
-        entry.craft ? markButton(entry, recipeLearned(entry), "mark.haveRecipe", "mark.recipeAsLearned", "craft") : null),
+        entry.craft
+          ? markButton(entry, recipeLearned(entry), "mark.haveRecipe", "mark.recipeAsLearned", "craft")
+          : null),
       ...BODIES[entry.kind](entry),
       h("p", { class: "fan" }, t("app.disclaimer"))));
   if (fresh) el.scrollTop = 0;

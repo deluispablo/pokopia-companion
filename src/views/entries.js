@@ -7,7 +7,8 @@ import { getMarks, hasMark } from "../store.js";
 import { flavorIcon, TAB_ICONS } from "../ui/icons.js";
 import { fold } from "../util.js";
 
-export const TABS = ["pok", "hab", "obj", "rec", "casa"].map((key) => ({ key, label: "tabs." + key, icon: TAB_ICONS[key] }));
+export const TABS = ["pok", "hab", "obj", "rec", "casa"]
+  .map((key) => ({ key, label: "tabs." + key, icon: TAB_ICONS[key] }));
 export const tabOf = (key) => TABS.find((tab) => tab.key === key);
 
 /** Per list tab: the label of its main filter, the mark button's words and the "show" segment's words. */
@@ -35,7 +36,8 @@ const dexLabel = (entry) => (entry.num ? t("entry.number", { n: entry.num }) : "
 /** The line under an entry's name; in a list the group header already says some of it. */
 export function entrySubtitle(entry, inList) {
   if (entry.kind === "pok" || entry.kind === "hab") {
-    return inList ? dexLabel(entry) : [dexLabel(entry), groupName(entry.kind, entry.group)].filter(Boolean).join(" · ");
+    if (inList) return dexLabel(entry);
+    return [dexLabel(entry), groupName(entry.kind, entry.group)].filter(Boolean).join(" · ");
   }
   if (entry.kind === "obj") {
     const comfort = game.comfort[entry.id];
@@ -47,7 +49,8 @@ export function entrySubtitle(entry, inList) {
   return [flavorIcon(entry.o[4]), flavorName(entry.o[4])];
 }
 
-export const matchesQuery = (entry, query) => fold(entry.name).includes(query) || (entry.en && fold(entry.en).includes(query));
+export const matchesQuery = (entry, query) =>
+  fold(entry.name).includes(query) || (entry.en && fold(entry.en).includes(query));
 
 /** Number of filters set on the current list (not counting search and the show segment). */
 export const activeFilterCount = () =>

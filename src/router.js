@@ -1,6 +1,6 @@
 // The address holds where you are, so Back and links work:
 //   #pok  #pok/<name>  #hab/<name>  #obj/<id>  #rec/<name>  #casa  #casa/<Name>,<Name> (or indexes)  #casa/rep
-// Every in-app step is pushed with {app: true}; the ficha's Back pops it, or (after a deep link) replaces the
+// Every in-app step is pushed with {app: true}; the detail page's Back pops it, or (after a deep link) replaces the
 // address with the list. Each list tab keeps its own filters and scroll while you visit others.
 import { game } from "./game.js";
 import { LIST_TABS, MAX_RESIDENTS, freshList, render, resetHouse, state } from "./state.js";
@@ -8,7 +8,7 @@ import { byId } from "./ui/dom.js";
 import { closeSheet } from "./ui/sheet.js";
 import { uniq } from "./util.js";
 
-export const TAB_KEYS = ["pok", "hab", "obj", "rec", "casa"];
+const TAB_KEYS = ["pok", "hab", "obj", "rec", "casa"];
 const SPLIT_ID = "rep";
 
 // ---------- pure: addresses ----------
@@ -67,7 +67,7 @@ function snapshot(tab) {
   return { list, scroll: byId("list").scrollTop };
 }
 
-export function route() {
+function route() {
   if (location.hash === routedHash) return; // popstate and hashchange both fire for one step
   routedHash = location.hash;
   closeSheet();
