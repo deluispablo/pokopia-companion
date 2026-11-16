@@ -55,3 +55,10 @@ test("the collection follows the game's menu", () => {
   assert.ok(!game.entries.obj.some((e) => e.group === "Edificios especiales"), "the game's catalog has no buildings");
   assert.equal(game.known.shots.size, 50);
 });
+
+test("a habitat names the Pokémon it attracts", () => {
+  const herbazal = game.findEntry("hab", "Herbazal verde");
+  const names = game.visitorsOf(herbazal);
+  assert.ok(names.length > 0 && names.every((n) => game.known.pok.has(n)));
+  assert.deepEqual(game.visitorsOf({ o: {} }), []);
+});

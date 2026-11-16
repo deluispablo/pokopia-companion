@@ -47,8 +47,8 @@ export default {
   "recipe.learned": "Recipe learned",
   "recipe.toLearn": "Recipe to learn",
 
-  "progress.pok": "You have {n} of {m} Pokémon",
-  "progress.hab": "You've seen {n} of {m}",
+  "progress.pok": "Befriended {n} of {m} Pokémon",
+  "progress.hab": "Registered {n} of {m}",
   "progress.obj": "Seen {n} of {m} · {r} of {c} recipes",
   "progress.rec": "You've seen {n} of {m} dishes",
   "progress.here": "here {n} of {m}",
@@ -228,6 +228,7 @@ export default {
   "status.befriended": "Befriended",
   "status.sensed": "Sensed",
   "status.unknownPok": "Unknown",
+  "status.allPokemon": "All Pokémon Registered",
   "status.registered": "Registered",
   "status.known": "Known",
   "status.unknownHab": "Unknown",

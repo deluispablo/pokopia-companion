@@ -16,13 +16,15 @@ const NOT_IN_CATALOG = "Edificios especiales";
 /** Collection > Recipes tabs; any other category is under Other. */
 const RECIPE_CATEGORIES = ["Muebles", "Decoración", "Exteriores", "Objetos útiles", "Estructuras", "Bloques", "Otros"];
 /** Collection > Ancient Artifacts and Human Records tabs (collection.js keys). */
-export const ARTIFACT_GROUPS = ["large", "small", "fossil"];
-export const RECORD_GROUPS = ["newspaper", "diary", "magazine", "memo", "letter", "paper", "photo"];
+const ARTIFACT_GROUPS = ["large", "small", "fossil"];
+const RECORD_GROUPS = ["newspaper", "diary", "magazine", "memo", "letter", "paper", "photo"];
 const SHOT_COLOR = "#2F7FD6";
 // cats.js keeps the panel's own names (the desktop Guía) for these; the game's catalog calls them otherwise
 const GAME_CATEGORY = {
   "Construcción": "Estructuras", "Varios": "Otros", "Utilidades": "Objetos útiles", "Exterior": "Exteriores",
 };
+// and the game's Collection calls these items Human Records
+const GAME_SUBCATEGORY = { "Diarios": "Notas humanas" };
 
 /** Cooking families: recipe key, list name, the utensil that makes them and their colour. */
 export const FAMILIES = [
@@ -80,7 +82,7 @@ export function buildCatalog(globals) {
 
   const items = (data.items || []).map((item) => {
     const [category, subcategory] = categoryOf[item[0]] || [item[3], item[4]];
-    return [item[0], item[1], item[2], GAME_CATEGORY[category] || category, subcategory];
+    return [item[0], item[1], item[2], GAME_CATEGORY[category] || category, GAME_SUBCATEGORY[subcategory] || subcategory];
   });
   const itemById = new Map(items.map((item) => [item[0], item]));
   const itemImages = new Set(images.item || []);
@@ -177,6 +179,8 @@ export function buildCatalog(globals) {
     const name = item && fold(item[1]);
     return entries.rec.filter((e) => ((dishes[e.o[6]] || {}).ing || []).some((i) => itemNameIs(i, name)));
   };
+  /** The names of the Pokémon a habitat attracts. */
+  const visitorsOf = (habitat) => uniq((habitat.o.mons || []).map((m) => (pokemon[m.p] || {}).n).filter(Boolean));
   const habitatsUsing = (item) => {
     const name = fold(item[1]);
     return entries.hab.filter((x) => (x.o.req || [])
@@ -193,7 +197,7 @@ export function buildCatalog(globals) {
       pok: ZONES, hab: ZONES, obj: CATEGORIES.map(([name]) => name), rec: FAMILIES.map((f) => f.name),
       art: ARTIFACT_GROUPS, hr: RECORD_GROUPS, shot: [""], ins: RECIPE_CATEGORIES,
     },
-    entries, findEntry, itemEntry, itemEntryByName, familyOf, itemPicture, dishesWith, habitatsUsing,
+    entries, findEntry, itemEntry, itemEntryByName, familyOf, itemPicture, dishesWith, habitatsUsing, visitorsOf,
     // what a stored or imported mark may name
     known: {
       pok: new Set(pokemon.map((p) => p.n)), hab: new Set(habitats.map((x) => x.n)),

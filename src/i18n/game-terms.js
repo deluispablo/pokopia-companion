@@ -14,7 +14,7 @@ const SUBCATEGORY_EN = {
   "Almacenaje": "Storage", "Mesas y asientos": "Tables and seats", "Camas y tocadores": "Beds and dressers",
   "Puertas, ventanas y tejados": "Doors, windows and roofs", "Estructuras": "Structures",
   "Pinturas y materiales raros": "Paints and rare materials", "Alfombras y otros": "Rugs and more",
-  "Regalos de Pokémon": "Pokémon gifts", "Diarios": "Diaries", "Pistas de hábitat": "Habitat hints",
+  "Regalos de Pokémon": "Pokémon gifts", "Notas humanas": "Human Records", "Pistas de hábitat": "Habitat hints",
   "Paredes": "Walls", "Suelos": "Floors", "Rocas": "Rocks", "Tierras": "Soil", "Céspedes": "Grass",
   "Líquidos": "Liquids", "Semillas de árbol": "Tree seeds", "Semillas": "Seeds", "Cultivos": "Crops",
   "Minerales y corales": "Minerals and coral", "Árboles y plantas": "Trees and plants", "Tesoros": "Treasures",

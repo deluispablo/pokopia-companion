@@ -68,6 +68,11 @@ function applyHash() {
   if (members.join() !== state.houses.members.join()) resetHouse(members);
 }
 
+// the Collection list shows the section of the entry open over it (a link or a deep link may open any)
+function showSectionOfSelected() {
+  if (state.tab === "obj" && state.selected) state.section = state.selected.kind;
+}
+
 function snapshot(tab) {
   const list = LIST_TABS.includes(tab) ? Object.fromEntries(Object.keys(freshList()).map((k) => [k, state[k]])) : null;
   return { list, scroll: byId("list").scrollTop };
@@ -89,6 +94,7 @@ function route() {
     if (LIST_TABS.includes(state.tab)) Object.assign(state, freshList(), saved.list);
     pendingScroll = saved.scroll || 0;
   }
+  showSectionOfSelected();
   render();
 }
 
@@ -96,6 +102,7 @@ function route() {
 export function startRouter() {
   routedHash = location.hash;
   applyHash();
+  showSectionOfSelected();
   window.addEventListener("popstate", route);
   window.addEventListener("hashchange", route);
 }

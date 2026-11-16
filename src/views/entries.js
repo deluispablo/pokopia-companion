@@ -28,7 +28,7 @@ export const KINDS = {
   hab: {
     groupLabel: "filters.area", on: "mark.registered", off: "mark.asRegistered", info: "habInfo",
     infoOn: "mark.known", infoOff: "mark.asKnown",
-    status: [["all", "status.all"], ["own", "status.registered"], ["info", "status.known"], ["miss", "status.unknownHab"]],
+    status: [["all", "status.all"], ["allpok", "status.allPokemon"], ["own", "status.registered"], ["info", "status.known"], ["miss", "status.unknownHab"]],
   },
   obj: { groupLabel: "filters.category", on: "mark.seen", off: "mark.asSeen", show: ["show.seen", "show.notSeen"] },
   rec: { groupLabel: "filters.family", on: "mark.seen", off: "mark.asSeen", show: ["show.seen", "show.notSeen"] },
@@ -42,6 +42,13 @@ export const isMarked = (entry) => hasMark(entry.set, entry.id);
 /** A Pokémon or habitat you know about (the game's "sensed" / "known"), without the main mark. */
 export const isKnown = (entry) => !!KINDS[entry.kind].info && hasMark(KINDS[entry.kind].info, entry.id);
 const statusOf = (entry) => (isMarked(entry) ? "own" : isKnown(entry) ? "info" : "miss");
+// a habitat whose every Pokémon you have befriended (the game's "All Pokémon Registered")
+const allVisitorsBefriended = (entry) => {
+  const names = game.visitorsOf(entry);
+  return names.length > 0 && names.every((n) => hasMark("pok", n));
+};
+const passesShow = (entry) => state.show === "all" || state.show === statusOf(entry)
+  || (state.show === "allpok" && allVisitorsBefriended(entry));
 export const recipeLearned = (entry) => !!entry && entry.craft && hasMark("craft", entry.id);
 export const ownsPokemon = (k) => hasMark("pok", game.pokemon[k].n);
 /** Where an owned Pokémon lives now, or "". */
@@ -120,7 +127,7 @@ export function visibleEntries(kind, ignoreShow) {
   return game.entries[kind].filter((entry) => (!query || matchesQuery(entry, query))
     && (!state.group || entry.group === state.group)
     && (!state.subcategory || entry.subcat === state.subcategory)
-    && (ignoreShow || state.show === "all" || state.show === statusOf(entry))
+    && (ignoreShow || passesShow(entry))
     && passesKindFilters(kind, entry));
 }
 

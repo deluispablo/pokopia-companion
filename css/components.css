@@ -148,6 +148,10 @@
 .chip .ico { display: flex; }
 
 .subtabs { display: flex; flex-wrap: wrap; gap: 2px 16px; }
+/* the Collection's sections stay on one line, like the game's tabs, and scroll sideways when they do not fit */
+.subtabs.sections { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding-inline: 16px; }
+.subtabs.sections::-webkit-scrollbar { display: none; }
+.subtabs.sections .subtab { flex: none; white-space: nowrap; }
 .subtab {
   min-height: 28px;
   padding: 0 1px;
