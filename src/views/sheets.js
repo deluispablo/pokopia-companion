@@ -12,15 +12,17 @@ import { closeSheet, openSheet } from "../ui/sheet.js";
 import { toast } from "../ui/toast.js";
 import { fold } from "../util.js";
 import { pic } from "./controls.js";
-import { displayName, matchesQuery } from "./entries.js";
+import { displayName, listKind, matchesQuery } from "./entries.js";
 
-const QUICK_KINDS = ["pok", "hab", "obj", "rec"];
+// the Collection's sections each get a chip, named as in the game
+const QUICK_KINDS = ["pok", "hab", "art", "hr", "shot", "ins", "obj", "rec"];
+const quickLabel = (k) => t(["pok", "hab", "rec"].includes(k) ? "tabs." + k : "collection." + k);
 const QUICK_MAX = 90; // cards shown at once; searching finds the rest
 
 // ---------- quick mark ----------
 
 export function openQuickMark() {
-  let kind = state.tab === "casa" ? "pok" : state.tab;
+  let kind = state.tab === "casa" ? "pok" : listKind();
   let query = "";
   openSheet((close) => {
     const grid = h("div", { class: "qgrid" });
@@ -50,7 +52,7 @@ export function openQuickMark() {
         [...chips.children].forEach((b) => b.setAttribute("aria-pressed", String(b === ev.currentTarget)));
         draw();
       },
-    }, t("tabs." + k))));
+    }, quickLabel(k))));
     draw();
     setTimeout(() => input.focus(), 50);
     return [

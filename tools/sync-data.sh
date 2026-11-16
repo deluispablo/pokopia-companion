@@ -6,7 +6,7 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
 panel="${1:-${NXNATIVE_PANEL:-$root/../nxnative/dm/games/0400A3A01EE4C000/panel}}"
-files=(data.js images.js cats.js areas.js en.js crafts.js comfort.js)
+files=(data.js images.js cats.js areas.js en.js crafts.js comfort.js collection.js)
 
 if [[ ! -d "$panel" ]]; then
   echo "Panel folder not found: $panel" >&2

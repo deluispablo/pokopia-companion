@@ -1,5 +1,6 @@
 // The address holds where you are, so Back and links work:
 //   #pok  #pok/<name>  #hab/<name>  #obj/<id>  #rec/<name>  #casa  #casa/<Name>,<Name> (or indexes)  #casa/rep
+//   Collection entries other than items open in its tab: #art/<id>  #hr/<id>  #shot/<n>  #ins/<id>
 // Every in-app step is pushed with {app: true}; the detail page's Back pops it, or (after a deep link) replaces the
 // address with the list. Each list tab keeps its own filters and scroll while you visit others.
 import { game } from "./game.js";
@@ -9,16 +10,21 @@ import { closeSheet } from "./ui/sheet.js";
 import { uniq } from "./util.js";
 
 const TAB_KEYS = ["pok", "hab", "obj", "rec", "casa"];
+const COLLECTION_KINDS = ["art", "hr", "shot", "ins"];
+const NUMERIC_IDS = new Set(["obj", ...COLLECTION_KINDS]);
 const SPLIT_ID = "rep";
 
 // ---------- pure: addresses ----------
 
-/** "#obj/1052" -> {tab: "obj", id: "1052"}; an unknown tab falls back to the Pokémon list. */
+/** "#obj/1052" -> {tab: "obj", id: "1052"}, "#art/1258" -> {tab: "obj", id: "1258", kind: "art"};
+ *  an unknown tab falls back to the Pokémon list. */
 export function parseHash(hash) {
   let text = "";
   try { text = decodeURIComponent(hash.replace(/^#/, "")); } catch { /* a malformed address reads as none */ }
   const [tab, ...rest] = text.split("/");
-  return { tab: TAB_KEYS.includes(tab) ? tab : "pok", id: rest.join("/") };
+  const id = rest.join("/");
+  if (COLLECTION_KINDS.includes(tab)) return { tab: "obj", id, kind: tab };
+  return { tab: TAB_KEYS.includes(tab) ? tab : "pok", id };
 }
 
 /** House members from "Pidgey,Pidgeot" or "16,17": known names or indexes, once each, at most four. */
@@ -49,10 +55,10 @@ export function takePendingScroll() {
 }
 
 function applyHash() {
-  const { tab, id } = parseHash(location.hash);
+  const { tab, id, kind = tab } = parseHash(location.hash);
   state.tab = tab;
   if (tab !== "casa") {
-    state.selected = id ? game.findEntry(tab, tab === "obj" ? +id : id) || null : null;
+    state.selected = id ? game.findEntry(kind, NUMERIC_IDS.has(kind) ? +id : id) || null : null;
     return;
   }
   state.selected = null;

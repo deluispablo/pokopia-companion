@@ -17,7 +17,7 @@ const progress = (key) => {
 // tapping the current tab on its list starts the list over; from a detail page it goes back to the list
 const goToTab = (key) => () => {
   if (key === state.tab && !state.selected) {
-    if (LIST_TABS.includes(key)) Object.assign(state, freshList());
+    if (LIST_TABS.includes(key)) Object.assign(state, freshList(), { section: state.section });
     byId("list").scrollTop = 0;
     render();
     return;

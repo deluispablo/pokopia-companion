@@ -18,6 +18,11 @@ test("parseHash falls back to the Pokémon list", () => {
   assert.deepEqual(parseHash("#%E0%A4%A"), { tab: "pok", id: "" });
 });
 
+test("collection entries open in the Collection tab", () => {
+  assert.deepEqual(parseHash("#art/1258"), { tab: "obj", id: "1258", kind: "art" });
+  assert.deepEqual(parseHash("#shot/3"), { tab: "obj", id: "3", kind: "shot" });
+});
+
 test("an id may contain slashes", () => {
   assert.deepEqual(parseHash("#rec/a/b"), { tab: "rec", id: "a/b" });
 });

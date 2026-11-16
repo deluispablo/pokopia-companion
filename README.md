@@ -1,8 +1,9 @@
 # Mi Pokopia · Companion
 
 A phone-first web app for players of Pokopia on Nintendo Switch 2. The game's save can't be read, so you
-mark things by hand as you play: the Pokémon you have and where each one lives now, the habitats, items and
-dishes you have seen, and the item recipes you have learned. It also works on tablets and desktops, in
+mark things by hand as you play: the Pokémon you have befriended and where each one lives now, the habitats you
+have registered, your Collection (ancient artifacts, human records, highlight reel photos, recipes and items) and
+the dishes you have seen. It also works on tablets and desktops, in
 Spanish (default) or English, with a light and a dark theme.
 
 This is a fan project, not affiliated with Nintendo, Game Freak, Creatures or The Pokémon Company. Game names,
@@ -10,8 +11,12 @@ data and pictures belong to their owners.
 
 ## Features
 
-- Pokémon, Habitats, Items and Cooking lists with search, "have / missing" views and filters (area,
-  category, family, flavour, environment, specialty, current location, recipe, attribute)
+- Pokémon, Habitats, Collection and Cooking lists organised like the game's own menus, with search and
+  filters (registration status, location, type, category, family, flavour, environment, specialty, recipe,
+  attribute)
+- The Collection's five sections as in the game: Ancient Artifacts (from the game's own table), Human Records,
+  Highlight Reel, Recipes and Items. Human record types and highlight reel shots come from
+  [Pokopia Guide](https://pokopiaguide.com/collectibles), as the game keeps no list of them we can read
 - A page for each entry, linking Pokémon, habitats, items and dishes to each other
 - One-tap marking with undo, and a quick-mark sheet for marking many at once
 - Houses: design a house for up to four Pokémon (best housemates, items, comfort items and dishes that suit

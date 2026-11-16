@@ -12,8 +12,8 @@ import { toast } from "../ui/toast.js";
 import { fold } from "../util.js";
 import { pic, whereLabel } from "./controls.js";
 import {
-  KINDS, TABS, activeFilterCount, displayName, entrySubtitle, groupName, isMarked, matchesQuery, recipeLearned,
-  subcategoriesOf, visibleEntries, whereOf,
+  KINDS, TABS, activeFilterCount, displayName, entrySubtitle, groupName, isMarked, listKind, matchesQuery,
+  recipeLearned, subcategoriesOf, visibleEntries, whereOf,
 } from "./entries.js";
 import { renderHouses } from "./houses.js";
 import { renderSplit } from "./split.js";
@@ -103,7 +103,7 @@ export function renderList() {
     el.append(state.houses.mode === "split" ? renderSplit() : renderHouses());
     return;
   }
-  const kind = state.tab;
+  const kind = listKind();
   const entries = visibleEntries(kind);
   if (!entries.length) {
     el.append(emptyState(), alsoIn() || "");

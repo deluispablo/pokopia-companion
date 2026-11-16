@@ -2,7 +2,7 @@
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
-const FILES = ["data.js", "images.js", "cats.js", "areas.js", "en.js", "crafts.js", "comfort.js"];
+const FILES = ["data.js", "images.js", "cats.js", "areas.js", "en.js", "crafts.js", "comfort.js", "collection.js"];
 
 export function loadGameGlobals() {
   const sandbox = {};

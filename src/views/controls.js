@@ -17,7 +17,7 @@ export function pic(p, extraClass) {
     });
   }
   return h("span", { class: "pic sq" + more, style: "background:" + p.color, "aria-hidden": "true" },
-    (p.sq || "?").charAt(0).toUpperCase());
+    p.text || (p.sq || "?").charAt(0).toUpperCase());
 }
 
 export const brand = () => h("div", { class: "brand" }, h("span", { class: "logo", html: LOGO }),

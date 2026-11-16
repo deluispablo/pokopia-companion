@@ -9,6 +9,9 @@ const known = {
   items: new Map([[10, []], [20, []]]),
   craft: new Map([[10, []]]),
   homes: new Set(["Isla Nube", "Bahía Borrasca"]),
+  shots: new Set([1, 2]),
+  pokInfo: new Set(["Pikachu", "Eevee"]),
+  habInfo: new Set(["Herbazal verde"]),
 };
 
 test("isMarksFile wants version 1 and at least one list", () => {
@@ -66,4 +69,10 @@ test("countToday counts marks since local midnight", () => {
     a: +new Date(2026, 10, 16, 0, 0), b: +new Date(2026, 10, 16, 14, 0), c: +new Date(2026, 10, 15, 23, 59),
   };
   assert.equal(countToday(at, now), 2);
+});
+
+test("cleanMarks keeps highlight reel shots and what you know of Pokémon and habitats", () => {
+  const m = cleanMarks({ v: 1, shots: [1, 7], pokInfo: ["Eevee", "Mew"], habInfo: ["Herbazal verde"] }, known);
+  assert.deepEqual([m.shots, m.pokInfo, m.habInfo], [[1], ["Eevee"], ["Herbazal verde"]]);
+  assert.deepEqual(cleanMarks({ v: 1, pok: [] }, known).shots, [], "older files have none");
 });

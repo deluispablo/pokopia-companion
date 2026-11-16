@@ -3,12 +3,14 @@
 import { game } from "../game.js";
 import { setLanguage, t } from "../i18n/index.js";
 import { currentHousesHash, goTo } from "../router.js";
-import { PAGE_SIZE, render, state } from "../state.js";
+import { PAGE_SIZE, freshList, render, state } from "../state.js";
 import { prefs, setPref } from "../store.js";
 import { byId, h } from "../ui/dom.js";
 import { BACKUP, CHECK, QUICK_MARK, SEARCH, THEME_ICONS, svg } from "../ui/icons.js";
-import { brand, segmented } from "./controls.js";
-import { KINDS, activeFilterCount, isMarked, recipeLearned, tabOf, visibleEntries } from "./entries.js";
+import { brand, segmented, subtab } from "./controls.js";
+import {
+  KINDS, SECTIONS, activeFilterCount, isMarked, listKind, recipeLearned, tabOf, visibleEntries,
+} from "./entries.js";
 import { filtersPanel, filtersSummary } from "./filters.js";
 import { renderList } from "./list.js";
 import { openBackup, openQuickMark } from "./sheets.js";
@@ -111,7 +113,15 @@ function searchBox() {
   return h("div", { class: "msearch", html: SEARCH }, input);
 }
 
+// the Collection's sections, as the game's tabs; each starts its list over
+function sectionTabs() {
+  const pick = (kind) => () => { Object.assign(state, freshList(), { section: kind }); render(); };
+  return h("div", { class: "subtabs sections", role: "group", "aria-label": t("collection.sections") },
+    SECTIONS.map((kind) => subtab(t("collection." + kind), state.section === kind, pick(kind))));
+}
+
 function showSegment(kind) {
+  if (!KINDS[kind].show) return null; // Pokémon and habitats filter by status instead
   const [own, missing] = KINDS[kind].show;
   return segmented([["all", t("show.all")], ["own", t(own)], ["miss", t(missing)]], state.show,
     (v) => { state.show = v; state.limit = PAGE_SIZE; }, t("show.label"));
@@ -140,6 +150,7 @@ export function renderHeader() {
       (v) => { state.houses.mode = v; goTo(currentHousesHash(), true); }, t("houses.mode")));
     return;
   }
-  const kind = state.tab;
-  top.append(searchBox(), showSegment(kind), filtersPanel(kind), filtersSummary(), progressLine(kind));
+  const kind = listKind();
+  if (state.tab === "obj") top.append(sectionTabs());
+  top.append(searchBox(), showSegment(kind) || "", filtersPanel(kind), filtersSummary(), progressLine(kind));
 }

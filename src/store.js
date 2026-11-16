@@ -1,17 +1,20 @@
 // What the player marks by hand, and their preferences, kept in this browser's localStorage only.
-// Marks ("pokopia:v1"): pok = Pokémon owned, zone = where each lives now, hab / items / rec = habitats, items
-// and dishes seen, craft = item recipes learned, at = when each mark was made ("kind:id" -> ms).
+// Marks ("pokopia:v1"): pok = Pokémon befriended, zone = where each lives now, hab = habitats registered, items /
+// rec = items and dishes seen, craft = item recipes learned, shots = highlight reel photos taken, pokInfo / habInfo =
+// Pokémon and habitats you know about, at = when each mark was made ("kind:id" -> ms).
 import { isPlainObject, uniq } from "./util.js";
 
 const MARKS_KEY = "pokopia:v1";
 const PREFS_KEY = "pokopia:prefs";
-export const MARK_KINDS = ["pok", "hab", "craft", "items", "rec"];
+export const MARK_KINDS = ["pok", "hab", "craft", "items", "rec", "shots", "pokInfo", "habInfo"];
 // kept as it was first published, so every backup file has the same name pattern
 export const EXPORT_PREFIX = "pokopia-marcas-";
 
 // ---------- pure helpers (no storage) ----------
 
-export const blankMarks = () => ({ v: 1, pok: [], hab: [], craft: [], items: [], rec: [], zone: {}, at: {} });
+export const blankMarks = () => ({
+  v: 1, pok: [], hab: [], craft: [], items: [], rec: [], shots: [], pokInfo: [], habInfo: [], zone: {}, at: {},
+});
 
 /** A marks file: version 1 and at least one list of marks (a list left out counts as empty). */
 export const isMarksFile = (o) => isPlainObject(o) && o.v === 1 && MARK_KINDS.some((k) => Array.isArray(o[k]));

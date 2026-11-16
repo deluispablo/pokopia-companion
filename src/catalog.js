@@ -2,15 +2,23 @@
 // lists and links. Rows keep the generator's tuple form:
 //   item   [id, name, englishName, category, subcategory]
 //   recipe [name, description, familyKey, boostedMove, flavor, unused, dishItemId]
+// The Collection follows the game's menu: ancient artifacts, human records, highlight reel, recipes and items.
 import { fold, uniq } from "./util.js";
 
-/** Item categories in the game's catalog order, with the colour of their placeholder square. */
+/** Item categories in the order of the game's Collection > Items tabs, with the colour of their placeholder square.
+ *  The game lists no special buildings there. */
 const CATEGORIES = [
-  ["Muebles", "#A2845E"], ["Decoración", "#C9485B"], ["Objetos útiles", "#AF52DE"],
-  ["Estructuras", "#6E7B8B"], ["Bloques", "#5E9C76"], ["Exteriores", "#2F9E8F"],
-  ["Naturaleza", "#4E9A6A"], ["Comida", "#E8833A"], ["Materiales", "#8E8E93"], ["Kits", "#2F7FD6"],
-  ["Edificios especiales", "#B5533C"], ["Objetos clave", "#D4A017"], ["Otros", "#A1A1A6"],
+  ["Muebles", "#A2845E"], ["Decoración", "#C9485B"], ["Exteriores", "#2F9E8F"], ["Objetos útiles", "#AF52DE"],
+  ["Estructuras", "#6E7B8B"], ["Bloques", "#5E9C76"], ["Kits", "#2F7FD6"], ["Naturaleza", "#4E9A6A"],
+  ["Comida", "#E8833A"], ["Materiales", "#8E8E93"], ["Objetos clave", "#D4A017"], ["Otros", "#A1A1A6"],
 ];
+const NOT_IN_CATALOG = "Edificios especiales";
+/** Collection > Recipes tabs; any other category is under Other. */
+const RECIPE_CATEGORIES = ["Muebles", "Decoración", "Exteriores", "Objetos útiles", "Estructuras", "Bloques", "Otros"];
+/** Collection > Ancient Artifacts and Human Records tabs (collection.js keys). */
+export const ARTIFACT_GROUPS = ["large", "small", "fossil"];
+export const RECORD_GROUPS = ["newspaper", "diary", "magazine", "memo", "letter", "paper", "photo"];
+const SHOT_COLOR = "#2F7FD6";
 // cats.js keeps the panel's own names (the desktop Guía) for these; the game's catalog calls them otherwise
 const GAME_CATEGORY = {
   "Construcción": "Estructuras", "Varios": "Otros", "Utilidades": "Objetos útiles", "Exterior": "Exteriores",
@@ -53,7 +61,7 @@ function mainZone(habitat) {
 function browsableItems(items, itemImages) {
   const seen = new Map();
   for (const item of items) {
-    if (!item[1] || item[1] === "(?)" || item[3] === "Recetas") continue;
+    if (!item[1] || item[1] === "(?)" || item[3] === "Recetas" || item[3] === NOT_IN_CATALOG) continue;
     const key = item[3] + "|" + fold(item[1]);
     const kept = seen.get(key);
     if (!kept || (!itemImages.has(kept[0]) && itemImages.has(item[0]))) seen.set(key, item);
@@ -68,6 +76,7 @@ export function buildCatalog(globals) {
   const categoryOf = globals.PANEL_CATS || {};
   const english = { tags: {}, spw: {}, areas: {}, habs: {}, habDesc: {}, itemDesc: {}, ...globals.PANEL_EN };
   const comfort = globals.PANEL_COMFORT || {};
+  const collection = { artifacts: [], records: {}, shots: [], frames: {}, ...globals.PANEL_COLLECTION };
 
   const items = (data.items || []).map((item) => {
     const [category, subcategory] = categoryOf[item[0]] || [item[3], item[4]];
@@ -97,6 +106,13 @@ export function buildCatalog(globals) {
   const itemPicture = (item) => (itemImages.has(item[0])
     ? { src: "img/items/" + item[0] + ".png" }
     : { sq: item[1], color: categoryColor[item[3]] || GREY });
+  // an artifact or human record: the item itself, every id on its own (ten photos share one name)
+  const collected = (kind, id, group, extra) => {
+    const item = itemById.get(id);
+    return item && {
+      kind, set: "items", id, name: item[1], en: titleCase(item[2]), pic: itemPicture(item), group, o: item, ...extra,
+    };
+  };
   const pokemonPicture = (p) => (images.pok && images.pok[p.n]
     ? { src: "img/pokemon/" + images.pok[p.n] }
     : { sq: p.n, color: POKEMON_COLOR });
@@ -126,7 +142,20 @@ export function buildCatalog(globals) {
       en: r[6] != null && itemById.has(r[6]) ? titleCase(itemById.get(r[6])[2]) : "",
       pic: dishPicture(r), group: familyOf(r).name, o: r,
     })),
+    art: collection.artifacts.map(([id, group, basin]) => collected("art", id, group, { basin: !!basin }))
+      .filter(Boolean),
+    hr: RECORD_GROUPS.flatMap((group) => (collection.records[group] || [])
+      .map((id, i) => collected("hr", id, group, { num: String(i + 1) }))).filter(Boolean),
+    // a shot: [es, en, reward frame, Bubbly Basin]
+    shot: collection.shots.map(([name, en, frame, basin], i) => ({
+      kind: "shot", set: "shots", id: i + 1, name, en, num: String(i + 1), pic: { text: String(i + 1), color: SHOT_COLOR },
+      group: "", frame: collection.frames[frame] || null, basin: !!basin,
+    })),
   };
+  // Collection > Recipes: the items you can craft, marked by the recipe learned
+  entries.ins = entries.obj.filter((e) => e.craft).map((e) => ({
+    ...e, kind: "ins", set: "craft", craft: false, group: RECIPE_CATEGORIES.includes(e.group) ? e.group : "Otros",
+  }));
 
   const findEntry = (kind, id) => entries[kind].find((e) => e.id === id);
   const sameName = (name) => (item) => fold(item[1]) === name;
@@ -160,12 +189,17 @@ export function buildCatalog(globals) {
     itemTags: data.itemTags || {},
     itemWeb: data.itemWeb || {},
     tags: data.tags || [],
-    groups: { pok: ZONES, hab: ZONES, obj: CATEGORIES.map(([name]) => name), rec: FAMILIES.map((f) => f.name) },
+    groups: {
+      pok: ZONES, hab: ZONES, obj: CATEGORIES.map(([name]) => name), rec: FAMILIES.map((f) => f.name),
+      art: ARTIFACT_GROUPS, hr: RECORD_GROUPS, shot: [""], ins: RECIPE_CATEGORIES,
+    },
     entries, findEntry, itemEntry, itemEntryByName, familyOf, itemPicture, dishesWith, habitatsUsing,
     // what a stored or imported mark may name
     known: {
       pok: new Set(pokemon.map((p) => p.n)), hab: new Set(habitats.map((x) => x.n)),
       rec: new Set(recipes.map((r) => r[0])), items: itemById, craft: itemById, homes: new Set(homes),
+      shots: new Set(entries.shot.map((e) => e.id)),
+      pokInfo: new Set(pokemon.map((p) => p.n)), habInfo: new Set(habitats.map((x) => x.n)),
     },
   };
 }

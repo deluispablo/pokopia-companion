@@ -5,9 +5,11 @@ export const PAGE_SIZE = 120;
 export const MAX_RESIDENTS = 4;
 
 /** A list tab's own state, kept per tab while you visit others.
- *  filters: what a link can set (tag, flavor, env, spw, zone); recipe: "", "craft", "learned" or "tolearn". */
+ *  show: "all", "own", "info" (Pokémon and habitats you know about) or "miss";
+ *  filters: what a link can set (tag, flavor, env, spw, zone); recipe: "", "craft", "learned" or "tolearn";
+ *  section: the Collection tab's section, the kind of entry it lists ("art", "hr", "shot", "ins" or "obj"). */
 export const freshList = () => ({
-  show: "all", query: "", group: "", subcategory: "", limit: PAGE_SIZE, filters: {}, recipe: "",
+  show: "all", query: "", group: "", subcategory: "", limit: PAGE_SIZE, filters: {}, recipe: "", section: "obj",
 });
 
 export const state = {

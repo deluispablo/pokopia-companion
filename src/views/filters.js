@@ -21,9 +21,17 @@ function setFilter(key, value) {
 }
 const filterSetter = (key) => (value) => setFilter(key, value);
 
+// the game's Registration Status of Pokémon and habitats
+function statusRow(kind) {
+  const pick = (value) => () => { state.show = value; state.limit = PAGE_SIZE; render(); };
+  return filterRow(t("filters.status"), h("div", { class: "chips" },
+    KINDS[kind].status.map(([value, label]) => chip(t(label), state.show === value, pick(value)))));
+}
+
 function groupRow(kind) {
   const all = game.entries[kind];
-  const groups = game.groups[kind].filter((g) => all.some((e) => e.group === g));
+  const groups = game.groups[kind].filter((g) => g && all.some((e) => e.group === g));
+  if (!groups.length) return null;
   const pickGroup = (g) => () => {
     state.group = g;
     state.subcategory = "";
@@ -82,7 +90,7 @@ function moreFields(kind) {
 
 /** The filter rows of a list tab. */
 export function filtersPanel(kind) {
-  const rows = [groupRow(kind)];
+  const rows = [KINDS[kind].status ? statusRow(kind) : null, groupRow(kind)];
   if (kind === "obj") rows.push(subcategoryRow());
   if (kind === "rec") rows.push(flavorRow());
   const fields = moreFields(kind);

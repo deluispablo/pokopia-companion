@@ -16,7 +16,7 @@ import {
 import { capitalize, fold } from "../util.js";
 import { pic, whereLabel } from "./controls.js";
 import {
-  KINDS, displayName, entrySubtitle, homeOf, isMarked, ownsPokemon, recipeLearned, whereOf,
+  KINDS, displayName, entrySubtitle, homeOf, isKnown, isMarked, ownsPokemon, recipeLearned, whereOf,
 } from "./entries.js";
 
 const MAX_FANS = 30;
@@ -209,7 +209,19 @@ function recipeBody(entry) {
   return out;
 }
 
-const BODIES = { pok: pokemonBody, hab: habitatBody, obj: itemBody, rec: recipeBody };
+function shotBody(entry) {
+  const facts = [
+    entry.frame && row(t("detail.reward"), t("collection.frame", { f: isEnglish() ? entry.frame[1] : entry.frame[0] })),
+    entry.basin && row(t("detail.area"), areaName("Cuenca Coralina")),
+  ].filter(Boolean);
+  return facts.length ? [section("detail.guide", rowList(facts))] : [];
+}
+
+// artifacts, human records and recipes are items: they read like one
+const BODIES = {
+  pok: pokemonBody, hab: habitatBody, obj: itemBody, rec: recipeBody,
+  art: itemBody, hr: itemBody, ins: itemBody, shot: shotBody,
+};
 
 // ---------- the panel ----------
 
@@ -255,6 +267,7 @@ export function renderDetail() {
       h("div", { class: "hero" }, pic(entry.pic), h("h2", null, displayName(entry)),
         h("span", null, entrySubtitle(entry)), where ? whereLabel(where) : null),
       h("div", { class: "ownbtns" }, markButton(entry, isMarked(entry), kind.on, kind.off, entry.set),
+        kind.info ? markButton(entry, isKnown(entry), kind.infoOn, kind.infoOff, kind.info) : null,
         entry.craft
           ? markButton(entry, recipeLearned(entry), "mark.haveRecipe", "mark.recipeAsLearned", "craft")
           : null),

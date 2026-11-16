@@ -14,7 +14,7 @@ import { renderNav } from "./nav.js";
 // but not when you mark something
 const listKey = () => (state.tab === "casa"
   ? "casa:" + state.houses.mode
-  : [state.tab, state.show, state.query, state.group, state.subcategory, state.recipe, JSON.stringify(state.filters)]
+  : [state.tab, state.section, state.show, state.query, state.group, state.subcategory, state.recipe, JSON.stringify(state.filters)]
     .join("|"));
 let lastListKey = "";
 
