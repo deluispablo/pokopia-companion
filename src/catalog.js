@@ -59,11 +59,12 @@ function mainZone(habitat) {
   return (ZONE_ENDS.find(([last]) => habitat.num <= last) || [])[1] || "";
 }
 
-// one card per name and category, preferring the id that has a picture
-function browsableItems(items, itemImages) {
+// one card per name and category, preferring the id that has a picture; listed(item) says whether the game's
+// Collection > Items lists it
+function browsableItems(items, itemImages, listed) {
   const seen = new Map();
   for (const item of items) {
-    if (!item[1] || item[1] === "(?)" || item[3] === "Recetas" || item[3] === NOT_IN_CATALOG) continue;
+    if (!item[1] || item[1] === "(?)" || item[3] === "Recetas" || item[3] === NOT_IN_CATALOG || !listed(item)) continue;
     const key = item[3] + "|" + fold(item[1]);
     const kept = seen.get(key);
     if (!kept || (!itemImages.has(kept[0]) && itemImages.has(item[0]))) seen.set(key, item);
@@ -78,7 +79,7 @@ export function buildCatalog(globals) {
   const categoryOf = globals.PANEL_CATS || {};
   const english = { tags: {}, spw: {}, areas: {}, habs: {}, habDesc: {}, itemDesc: {}, ...globals.PANEL_EN };
   const comfort = globals.PANEL_COMFORT || {};
-  const collection = { artifacts: [], records: {}, shots: [], frames: {}, ...globals.PANEL_COLLECTION };
+  const collection = { artifacts: [], records: {}, shots: [], frames: {}, order: {}, ...globals.PANEL_COLLECTION };
 
   const items = (data.items || []).map((item) => {
     const [category, subcategory] = categoryOf[item[0]] || [item[3], item[4]];
@@ -91,7 +92,11 @@ export function buildCatalog(globals) {
     .map((p) => (typeof p === "string" ? { n: p, habs: [], likes: [], spw: [] } : p));
   const recipes = data.recipes || [];
   const dishes = data.dishes || {};
-  const cards = browsableItems(items, itemImages);
+  // collection.js order: an item's place in the game's Collection > Items, which leaves some items out
+  const placeOf = (id) => collection.order[id];
+  const hasOrder = Object.keys(collection.order || {}).length > 0;
+  const cards = browsableItems(items, itemImages, (item) => !hasOrder || placeOf(item[0]) != null);
+  if (hasOrder) cards.sort((a, b) => placeOf(a[0]) - placeOf(b[0]));
   // the places a Pokémon can live (areas.js has the game's area names)
   const homes = uniq((globals.PANEL_AREAS || []).filter(Boolean));
   const environments = uniq(pokemon.map((p) => p.env).filter(Boolean)).sort((a, b) => a.localeCompare(b, "es"));
@@ -100,12 +105,8 @@ export function buildCatalog(globals) {
     .sort((a, b) => a.localeCompare(b, "es"));
 
   // recipes name the item they make by id, but the game repeats an item under several ids: match by name
-  // the crafting table's rows, in the game's order: a recipe's place there is its place in Collection > Recipes
-  const recipeRank = new Map();
-  (globals.PANEL_CRAFTS || []).forEach((id, row) => {
-    const name = id && itemById.has(id) ? fold(itemById.get(id)[1]) : "";
-    if (name && !recipeRank.has(name)) recipeRank.set(name, row);
-  });
+  const craftable = new Set((globals.PANEL_CRAFTS || []).filter(Boolean)
+    .map((id) => (itemById.has(id) ? fold(itemById.get(id)[1]) : "")));
   const familyOf = (recipe) => FAMILIES.find((f) => f.key === recipe[2]) || FAMILIES[0];
   const categoryColor = Object.fromEntries(CATEGORIES);
 
@@ -141,7 +142,7 @@ export function buildCatalog(globals) {
     })),
     obj: cards.map((item) => ({
       kind: "obj", set: "items", id: item[0], name: item[1], en: titleCase(item[2]),
-      craft: recipeRank.has(fold(item[1])), pic: itemPicture(item), group: item[3], subcat: item[4] || "", o: item,
+      craft: craftable.has(fold(item[1])), pic: itemPicture(item), group: item[3], subcat: item[4] || "", o: item,
     })),
     rec: recipes.map((r) => ({
       kind: "rec", set: "rec", id: r[0], name: r[0],
@@ -158,10 +159,11 @@ export function buildCatalog(globals) {
       group: "", frame: collection.frames[frame] || null, basin: !!basin,
     })),
   };
-  // Collection > Recipes: the items you can craft, marked by the recipe learned
+  // Collection > Recipes: the items you can craft, marked by the recipe learned; the game lists them by its tabs
+  // (furniture first, everything else under Other last), each in the Items order
   entries.ins = entries.obj.filter((e) => e.craft).map((e) => ({
     ...e, kind: "ins", set: "craft", craft: false, group: RECIPE_CATEGORIES.includes(e.group) ? e.group : "Otros",
-  })).sort((a, b) => recipeRank.get(fold(a.name)) - recipeRank.get(fold(b.name)));
+  })).sort((a, b) => RECIPE_CATEGORIES.indexOf(a.group) - RECIPE_CATEGORIES.indexOf(b.group));
 
   const findEntry = (kind, id) => entries[kind].find((e) => e.id === id);
   const sameName = (name) => (item) => fold(item[1]) === name;

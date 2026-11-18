@@ -63,7 +63,10 @@ test("a habitat names the Pokémon it attracts", () => {
   assert.deepEqual(game.visitorsOf({ o: {} }), []);
 });
 
-test("recipes keep the order of the game's crafting table", () => {
-  const first = game.entries.ins.slice(0, 3).map((e) => e.name);
-  assert.deepEqual(first, ["Suelo de ladrillo en arco", "Suelo adoquinado", "Tarima"]);
+test("items and recipes follow the order of the game's Collection", () => {
+  assert.equal(game.entries.obj[0].name, "Baya zanama", "Items > All starts with food");
+  assert.equal(game.entries.obj.find((e) => e.group === "Muebles").name, "Baúl", "Items > Furniture");
+  assert.equal(game.entries.ins[0].name, "Baúl", "Recipes > All");
+  assert.ok(!game.entries.obj.some((e) => e.name === "Pista de hábitat 1"), "the tab hides habitat hints");
+  assert.ok(!game.entries.obj.some((e) => e.subcat === "Notas humanas"), "and human records");
 });

@@ -85,7 +85,7 @@ export function entrySubtitle(entry, inList) {
     return [dexLabel(entry), entry.frame ? t("collection.frame", { f: frameName(entry.frame) }) : "",
       entry.basin ? areaName("Cuenca Coralina") : ""].filter(Boolean).join(" · ");
   }
-  if (entry.kind === "ins") return inList && state.group ? "" : categoryName(entry.group);
+  if (entry.kind === "ins") return entry.subcat ? subcategoryName(entry.subcat) : inList ? "" : categoryName(entry.group);
   if (entry.kind === "obj") {
     const comfort = game.comfort[entry.id];
     return [

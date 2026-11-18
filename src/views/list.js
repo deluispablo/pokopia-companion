@@ -9,7 +9,7 @@ import { countMarks, flipMark, getMarks, hasMark, prefs, setHome, setPref } from
 import { byId, h } from "../ui/dom.js";
 import { BACKUP, CHECK, HOME, RECIPE, svg } from "../ui/icons.js";
 import { toast } from "../ui/toast.js";
-import { fold } from "../util.js";
+import { fold, uniq } from "../util.js";
 import { pic, whereLabel } from "./controls.js";
 import {
   KINDS, TABS, activeFilterCount, displayName, entrySubtitle, groupName, isMarked, listKind, matchesQuery,
@@ -93,7 +93,9 @@ function sections(kind, entries) {
     return subcategories.concat([""]).map((sub) => [sub ? subcategoryName(sub) : t("list.otherSubcategory"),
       entries.filter((e) => e.subcat === sub)]);
   }
-  return game.groups[kind].map((g) => [groupName(kind, g), entries.filter((e) => e.group === g)]);
+  // items come in the game's order, which also orders their categories (food first)
+  const groups = kind === "obj" ? uniq(entries.map((e) => e.group)) : game.groups[kind];
+  return groups.map((g) => [groupName(kind, g), entries.filter((e) => e.group === g)]);
 }
 
 export function renderList() {
