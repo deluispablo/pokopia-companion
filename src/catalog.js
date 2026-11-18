@@ -100,8 +100,12 @@ export function buildCatalog(globals) {
     .sort((a, b) => a.localeCompare(b, "es"));
 
   // recipes name the item they make by id, but the game repeats an item under several ids: match by name
-  const craftable = new Set((globals.PANEL_CRAFTS || []).filter(Boolean)
-    .map((id) => (itemById.has(id) ? fold(itemById.get(id)[1]) : "")));
+  // the crafting table's rows, in the game's order: a recipe's place there is its place in Collection > Recipes
+  const recipeRank = new Map();
+  (globals.PANEL_CRAFTS || []).forEach((id, row) => {
+    const name = id && itemById.has(id) ? fold(itemById.get(id)[1]) : "";
+    if (name && !recipeRank.has(name)) recipeRank.set(name, row);
+  });
   const familyOf = (recipe) => FAMILIES.find((f) => f.key === recipe[2]) || FAMILIES[0];
   const categoryColor = Object.fromEntries(CATEGORIES);
 
@@ -137,7 +141,7 @@ export function buildCatalog(globals) {
     })),
     obj: cards.map((item) => ({
       kind: "obj", set: "items", id: item[0], name: item[1], en: titleCase(item[2]),
-      craft: craftable.has(fold(item[1])), pic: itemPicture(item), group: item[3], subcat: item[4] || "", o: item,
+      craft: recipeRank.has(fold(item[1])), pic: itemPicture(item), group: item[3], subcat: item[4] || "", o: item,
     })),
     rec: recipes.map((r) => ({
       kind: "rec", set: "rec", id: r[0], name: r[0],
@@ -157,7 +161,7 @@ export function buildCatalog(globals) {
   // Collection > Recipes: the items you can craft, marked by the recipe learned
   entries.ins = entries.obj.filter((e) => e.craft).map((e) => ({
     ...e, kind: "ins", set: "craft", craft: false, group: RECIPE_CATEGORIES.includes(e.group) ? e.group : "Otros",
-  }));
+  })).sort((a, b) => recipeRank.get(fold(a.name)) - recipeRank.get(fold(b.name)));
 
   const findEntry = (kind, id) => entries[kind].find((e) => e.id === id);
   const sameName = (name) => (item) => fold(item[1]) === name;

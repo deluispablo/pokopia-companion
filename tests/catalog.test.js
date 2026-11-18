@@ -62,3 +62,8 @@ test("a habitat names the Pokémon it attracts", () => {
   assert.ok(names.length > 0 && names.every((n) => game.known.pok.has(n)));
   assert.deepEqual(game.visitorsOf({ o: {} }), []);
 });
+
+test("recipes keep the order of the game's crafting table", () => {
+  const first = game.entries.ins.slice(0, 3).map((e) => e.name);
+  assert.deepEqual(first, ["Suelo de ladrillo en arco", "Suelo adoquinado", "Tarima"]);
+});
